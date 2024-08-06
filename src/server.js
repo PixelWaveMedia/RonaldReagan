@@ -6,16 +6,24 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.post('/send', (req, res) => {
+app.post('/send', async (req, res) => {
   const { name, email, message } = req.body;
 
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-      user: 'gamitinmoangemail@gmail.com',
-      pass: 'Mamamodaw2'
-    }
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
   });
+
+  const response = await fetch('http://localhost:3000/send', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(formObject),
+    });
 
   const mailOptions = {
     from: email,
@@ -23,6 +31,9 @@ app.post('/send', (req, res) => {
     subject: `Contact form submission from ${name}`,
     text: message
   };
+
+  const cors = require('cors');
+    app.use(cors());
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
@@ -38,11 +49,8 @@ app.listen(3000, () => {
 
 require('dotenv').config();
 
-const transporter = nodemailer.createTransport({
-  service: 'Gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+
+
+
+
 
