@@ -1,12 +1,16 @@
+require('dotenv').config();
 const express = require('express');
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
+const cors = require('cors');
+
 const app = express();
 
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.post('/send', async (req, res) => {
+app.post('/send', (req, res) => {   
   const { name, email, message } = req.body;
 
   const transporter = nodemailer.createTransport({
@@ -17,26 +21,16 @@ app.post('/send', async (req, res) => {
     },
   });
 
-  const response = await fetch('http://localhost:3000/send', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(formObject),
-    });
-
   const mailOptions = {
     from: email,
-    to: 'gamitinmoangemail@gmail.com',
+    to: 'gamitinmoangemail@gmail.com', // Replace with your receiving email address
     subject: `Contact form submission from ${name}`,
-    text: message
+    text: message,
   };
-
-  const cors = require('cors');
-    app.use(cors());
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
+      console.error('Error:', error);
       return res.status(500).send('Error sending email');
     }
     res.status(200).send('Email sent successfully');
@@ -46,11 +40,3 @@ app.post('/send', async (req, res) => {
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
-
-require('dotenv').config();
-
-
-
-
-
-
