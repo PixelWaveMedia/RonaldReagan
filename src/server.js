@@ -35,3 +35,14 @@ app.post('/send', (req, res) => {
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
+
+require('dotenv').config();
+
+const transporter = nodemailer.createTransport({
+  service: 'Gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
